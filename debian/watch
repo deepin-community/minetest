@@ -1,0 +1,27 @@
+version=4
+opts="\
+filenamemangle=s%(?:.*?)?v?(@ANY_VERSION@@ARCHIVE_EXT@)%@PACKAGE@-$1%, \
+dversionmangle=s/\+dfsg$//, \
+repacksuffix=+dfsg" \
+  https://github.com/minetest/minetest/tags \
+  (?:.*?/)?v?@ANY_VERSION@@ARCHIVE_EXT@ \
+  group
+
+opts="\
+filenamemangle=s%(?:.*?)?v?(@ANY_VERSION@@ARCHIVE_EXT@)%@PACKAGE@-mtg-$1%, \
+dversionmangle=s/\+dfsg$//, \
+repacksuffix=+dfsg, \
+component=mtg" \
+  https://github.com/minetest/minetest_game/tags \
+  (?:.*?/)?v?@ANY_VERSION@@ARCHIVE_EXT@ \
+  same
+
+opts="\
+filenamemangle=s%(?:.*?)?v?(@ANY_VERSION@@ARCHIVE_EXT@)%@PACKAGE@-irrlicht-$1%, \
+dversionmangle=s/\+dfsg$//, \
+repacksuffix=+dfsg, \
+component=irrlicht" \
+  https://github.com/minetest/irrlicht/tags \
+  (?:.*?/)?v?@ANY_VERSION@@ARCHIVE_EXT@ \
+  group
+

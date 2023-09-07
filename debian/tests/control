@@ -1,0 +1,3 @@
+Tests: minetest-unittests
+Depends: minetest
+Restrictions: allow-stderr

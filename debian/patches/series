@@ -1,0 +1,10 @@
+#kfreebsd-gettext.patch
+shared_mods.patch
+rawlua.patch
+postgresql.patch
+fix-typos.patch
+arch-support.patch
+enable_hardening.patch
+override_path_for_autopkgtest.patch
+disable-TestLua.patch
+use-system-lua++-patch

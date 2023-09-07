@@ -1,0 +1,14 @@
+#!/bin/dash
+# autopkgtest check
+
+set -e
+
+WORKDIR=$(mktemp -d)
+trap "rm -rf $WORKDIR" 0 INT QUIT ABRT PIPE TERM
+
+export HOME=$WORKDIR
+export TEST_WORLDDIR=/usr/share/games/minetest/autopkgtest/test_world
+export TEST_SUBGAME_PATH=/usr/share/games/minetest/games/devtest
+export TEST_MOD_PATH=/usr/share/games/minetest/autopkgtest/test_mod
+
+/usr/games/minetest --run-unittests

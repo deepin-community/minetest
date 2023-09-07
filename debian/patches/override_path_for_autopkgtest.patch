@@ -1,0 +1,129 @@
+Description: Fix unit tests to be run standalone
+ For the unittests, upstream "bakes in" the build directory path, via
+ ${CMAKE_CURRENT_SOURCE_DIR} to locate the resources required by the tests.
+ This patch replaces the fixed path by a relative path to the src directory,
+ and allows one to override them using environment variables.
+ .
+ The downside is, that now the unittests have to either specify the environment
+ variables or be run from the top level source dir.
+ .
+ The upside is, that autopkgtest will work without recompiling.
+Author: Tobias Frost <tobi@debian.org>
+Forwarded: PARTLY forwarded https://github.com/minetest/minetest/pull/12801
+ 
+Last-Update: 2022-09-16 <YYYY-MM-DD, last update of the meta-information, optional>
+---
+This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
+--- a/src/unittest/test_servermodmanager.cpp
++++ b/src/unittest/test_servermodmanager.cpp
+@@ -24,6 +24,8 @@
+ #include "test_config.h"
+ #include "util/string.h"
+ 
++#include <stdlib.h>
++
+ class TestServerModManager : public TestBase
+ {
+ public:
+@@ -61,8 +63,16 @@
+ 		_putenv(mod_path.c_str());
+ 	}
+ #else
+-	setenv("MINETEST_SUBGAME_PATH", TEST_SUBGAME_PATH, 1);
+-	setenv("MINETEST_MOD_PATH", TEST_MOD_PATH, 1);
++	if(!getenv("TEST_SUBGAME_PATH")) {
++	    setenv("MINETEST_SUBGAME_PATH", TEST_SUBGAME_PATH, 1);
++	} else {
++	    setenv("MINETEST_SUBGAME_PATH", getenv("TEST_SUBGAME_PATH"), 1);
++	}
++	if(!getenv("TEST_MOD_PATH")) {
++	    setenv("MINETEST_MOD_PATH", TEST_MOD_PATH, 1);
++	} else {
++	    setenv("MINETEST_MOD_PATH", getenv("TEST_MOD_PATH"), 1);
++	}
+ #endif
+ 
+ 	TEST(testCreation);
+@@ -103,6 +113,10 @@
+ void TestServerModManager::testCreation()
+ {
+ 	std::string path = std::string(TEST_WORLDDIR) + DIR_DELIM + "world.mt";
++	if (getenv("TEST_WORLDDIR")) {
++	    path = getenv("TEST_WORLDDIR");
++	    path = path + DIR_DELIM + "world.mt";
++	}
+ 	Settings world_config;
+ 	world_config.set("gameid", "devtest");
+ 	world_config.set("load_mod_test_mod", "true");
+@@ -131,7 +145,12 @@
+ 
+ void TestServerModManager::testGetMods()
+ {
+-	ServerModManager sm(std::string(TEST_WORLDDIR));
++    std::string path = std::string(TEST_WORLDDIR);
++    if (getenv("TEST_WORLDDIR")) {
++        path = getenv("TEST_WORLDDIR");
++    }
++
++	ServerModManager sm(path);
+ 	const auto &mods = sm.getMods();
+ 	UASSERTEQ(bool, mods.empty(), false);
+ 
+@@ -155,7 +174,11 @@
+ 
+ void TestServerModManager::testGetModspec()
+ {
+-	ServerModManager sm(std::string(TEST_WORLDDIR));
++    std::string path = std::string(TEST_WORLDDIR);
++    if (getenv("TEST_WORLDDIR")) {
++        path = getenv("TEST_WORLDDIR");
++    }
++	ServerModManager sm(path);
+ 	UASSERTEQ(const ModSpec *, sm.getModSpec("wrongmod"), NULL);
+ 	UASSERT(sm.getModSpec("basenodes") != NULL);
+ }
+@@ -170,7 +193,11 @@
+ 
+ void TestServerModManager::testGetModNames()
+ {
+-	ServerModManager sm(std::string(TEST_WORLDDIR));
++    std::string path = std::string(TEST_WORLDDIR);
++    if (getenv("TEST_WORLDDIR")) {
++        path = getenv("TEST_WORLDDIR");
++    }
++	ServerModManager sm(path);
+ 	std::vector<std::string> result;
+ 	sm.getModNames(result);
+ 	UASSERTEQ(bool, result.empty(), false);
+@@ -187,10 +214,14 @@
+ 
+ void TestServerModManager::testGetModMediaPaths()
+ {
+-	ServerModManager sm(std::string(TEST_WORLDDIR));
++    std::string path = std::string(TEST_WORLDDIR);
++    if (getenv("TEST_WORLDDIR")) {
++        path = getenv("TEST_WORLDDIR");
++    }
++	ServerModManager sm(path);
+ 	std::vector<std::string> result;
+ 	sm.getModsMediaPaths(result);
+-	UASSERTEQ(bool, result.empty(), false);
++    UASSERTEQ(bool, result.empty(), false);
+ 
+ 	// Test media overriding:
+ 	// unittests depends on basenodes to override default_dirt.png,
+--- a/src/unittest/CMakeLists.txt
++++ b/src/unittest/CMakeLists.txt
+@@ -45,9 +45,9 @@
+ 	${CMAKE_CURRENT_SOURCE_DIR}/test_keycode.cpp
+ 	PARENT_SCOPE)
+ 
+-set (TEST_WORLDDIR ${CMAKE_CURRENT_SOURCE_DIR}/test_world)
+-set (TEST_SUBGAME_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../games/devtest)
+-set (TEST_MOD_PATH ${CMAKE_CURRENT_SOURCE_DIR}/test_mod)
++set (TEST_WORLDDIR src/unittest/test_world)
++set (TEST_SUBGAME_PATH games/devtest)
++set (TEST_MOD_PATH src/unittest/test_mod)
+ 
+ configure_file(
+ 	"${CMAKE_CURRENT_SOURCE_DIR}/test_config.h.in"

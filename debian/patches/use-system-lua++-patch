@@ -1,0 +1,25 @@
+Description: Use pkgconfig to find C++ variant of Lua-5.1
+ Upstream compiles lua a c++ as well, and lua is c++ aware if
+ done so, so lets use the packaged c++ libraries as well.
+Author: Tobias Frost <tobi@debian.org>
+Forwarded: no, Debian specific.
+Last-Update: 2022-09-21 <YYYY-MM-DD, last update of the meta-information, optional>
+---
+This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -277,6 +277,14 @@
+ find_package(GMP REQUIRED)
+ find_package(Json REQUIRED)
+ find_package(Lua REQUIRED)
++
++if(NOT USE_LUAJIT)
++  include(FindPkgConfig)
++  pkg_check_modules(LUA REQUIRED lua-5.1-c++)
++  set(LUA_INCLUDE_DIR ${LUA_INCLUDE_DIRS})
++  set(LUA_LIBRARY ${LUA_LIBRARIES})
++endif()
++
+ if(NOT USE_LUAJIT)
+ 	set(LUA_BIT_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/lib/bitop)
+ 	set(LUA_BIT_LIBRARY bitop)

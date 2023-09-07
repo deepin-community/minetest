@@ -1,0 +1,28 @@
+From: Matthew Bekkema <mat8913ftw@gmail.com>
+Date: Sun, 4 Jan 2015 20:49:22 +0100
+Subject: kfreebsd-gettext
+Bug: https://github.com/minetest/minetest/issues/12800
+
+Fix the build on kFreeBSD as it uses glibc
+---
+ cmake/Modules/FindGettextLib.cmake | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/cmake/Modules/FindGettextLib.cmake b/cmake/Modules/FindGettextLib.cmake
+index b768182..e530706 100644
+--- a/cmake/Modules/FindGettextLib.cmake
++++ b/cmake/Modules/FindGettextLib.cmake
+@@ -51,9 +51,10 @@ find_package_handle_standard_args(GettextLib DEFAULT_MSG ${GETTEXT_REQUIRED_VARS
+ 
+ if(GETTEXTLIB_FOUND)
+ 	# BSD variants require special linkage as they don't use glibc
+-	if(${CMAKE_SYSTEM_NAME} MATCHES "BSD|DragonFly")
+-		set(GETTEXT_LIBRARY "intl")
+-	endif()
++	# DEBIAN CHANGE: kFreeBSD still uses glibc
++#	if(${CMAKE_SYSTEM_NAME} MATCHES "BSD|DragonFly")
++#		set(GETTEXT_LIBRARY "intl")
++#	endif()
+ 
+ 	set(GETTEXT_PO_PATH ${CMAKE_SOURCE_DIR}/po)
+ 	set(GETTEXT_MO_BUILD_PATH ${CMAKE_BINARY_DIR}/locale/<locale>/LC_MESSAGES)
