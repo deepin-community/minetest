@@ -1,0 +1,22 @@
+Description: fix typos
+Author: J. Puydt
+Forwarded: https://github.com/minetest/irrlicht/pull/133
+Applied-Upstream: https://github.com/minetest/irrlicht/commit/1cf0f3bef04e53c08004cc1106f48fcecca7ff88
+
+---
+ irrlicht/source/Irrlicht/CXMeshFileLoader.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/irrlicht/source/Irrlicht/CXMeshFileLoader.cpp b/irrlicht/source/Irrlicht/CXMeshFileLoader.cpp
+index 343895f..2de099f 100644
+--- a/irrlicht/source/Irrlicht/CXMeshFileLoader.cpp
++++ b/irrlicht/source/Irrlicht/CXMeshFileLoader.cpp
+@@ -1106,7 +1106,7 @@ bool CXMeshFileLoader::parseDataObjectSkinWeights(SXMesh &mesh)
+ 
+ 	if (!getNextTokenAsString(TransformNodeName))
+ 	{
+-		os::Printer::log("Unknown syntax while reading transfrom node name string in .x file", ELL_WARNING);
++		os::Printer::log("Unknown syntax while reading transform node name string in .x file", ELL_WARNING);
+ 		os::Printer::log("Line", core::stringc(Line).c_str(), ELL_WARNING);
+ 		return false;
+ 	}

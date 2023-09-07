@@ -1,0 +1,19 @@
+From: Markus Koschany <apo@debian.org>
+Date: Sat, 1 Feb 2020 23:36:10 +0100
+Subject: postgresql
+
+Fix for not finding PostgreSQL.
+---
+ src/CMakeLists.txt | 1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -129,6 +129,7 @@
+ set(USE_POSTGRESQL FALSE)
+ 
+ if(ENABLE_POSTGRESQL)
++	set(PostgreSQL_TYPE_INCLUDE_DIR /usr/include/postgresql/)
+ 	if(CMAKE_VERSION VERSION_LESS "3.20")
+ 		find_package(PostgreSQL QUIET)
+ 		# Before CMake 3.20 FindPostgreSQL.cmake always looked for server includes

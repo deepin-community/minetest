@@ -1,0 +1,12 @@
+minetest (5.5.0+dfsg+~1.9.0mt4+dfsg-1) unstable; urgency=medium
+
+  Minetest has now switched to their own fork of the Irrlicht game engine.
+  There are significant changes compared to upstream so be aware of
+  possible compatibility issues with support tools compiled with upstream
+  Irrlicht.
+
+  Maps are now compressed using zstd. Worlds opened or created in Minetest
+  5.5.0 will be migrated to this new format and will *no longer* be loadable in
+  previous versions of Minetest.
+
+ -- Travis Wrightsman <travis@wrightsman.org>  Sun, 27 Feb 2022 16:16:37 -0500

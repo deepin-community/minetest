@@ -1,0 +1,25 @@
+From: Markus Koschany <apo@debian.org>
+Date: Sun, 4 Jun 2017 21:50:23 +0200
+Subject: rawlua
+
+Forwarded: no
+---
+ cmake/Modules/FindLua.cmake | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/cmake/Modules/FindLua.cmake b/cmake/Modules/FindLua.cmake
+index be5d92d..177ec0b 100644
+--- a/cmake/Modules/FindLua.cmake
++++ b/cmake/Modules/FindLua.cmake
+@@ -21,8 +21,7 @@ else()
+ endif()
+ 
+ if(NOT USE_LUAJIT)
+-	message(STATUS "LuaJIT not found, using bundled Lua.")
+-	set(LUA_LIBRARY lua)
+-	set(LUA_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/lib/lua/src)
+-	add_subdirectory(lib/lua)
++	message (STATUS "LuaJIT not found, using the version of Lua provided by the system.")
++	set(LUA_INCLUDE_DIR "/usr/include/lua5.1/")
++	set(LUA_LIBRARY "lua5.1")
+ endif()

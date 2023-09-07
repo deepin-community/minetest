@@ -1,0 +1,20 @@
+Description: Add lookup path for package modules.
+Also look under /usr/share/games/minetest for mods, so that minetest-mod-*
+packages actually work.
+Author: Tobias Frost <tobi@debian.org>
+Forwarded: no
+Last-Update: 2022-10-20 <YYYY-MM-DD, last update of the meta-information, optional>
+---
+This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
+--- a/src/script/lua_api/l_mainmenu.cpp
++++ b/src/script/lua_api/l_mainmenu.cpp
+@@ -653,6 +653,9 @@
+ 		lua_pushstring(L, component.c_str());
+ 		lua_setfield(L, -2, fs::AbsolutePath(component).c_str());
+ 	}
++	lua_pushstring(L, "/usr/share/games/minetest/mods");
++	lua_setfield(L, -2, "share");
++
+ 	return 1;
+ }
+ 

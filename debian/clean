@@ -1,0 +1,6 @@
+bin/
+irrlicht/doctemp/
+scripts/doc/irrlicht/tut.txt
+src/unittest/test_world/world.mt
+lib/irrlichtmt/
+games/minetest_game/

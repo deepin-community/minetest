@@ -1,0 +1,50 @@
+Description: Pass CFLAGS and CPPFLAGS to build process
+ To enable hardening, CFLAGS and CPPFLAGS needs to be used in the build.
+Author: Tobias Frost <tobi@debian.org>
+Forwarded: https://github.com/minetest/minetest/pull/12799
+Forwarded: https://github.com/minetest/irrlicht/pull/134
+Last-Update: 2022-09-16 <YYYY-MM-DD, last update of the meta-information, optional>
+---
+This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -21,6 +21,8 @@
+ 	FORCE
+ )
+ 
++set(CMAKE_C_FLAGS "${CMAKE_CFLAGS}  $ENV{CFLAGS} $ENV{CPPFLAGS}")
++
+ 
+ # Set some random things default to not being visible in the GUI
+ mark_as_advanced(EXECUTABLE_OUTPUT_PATH LIBRARY_OUTPUT_PATH)
+@@ -584,6 +586,7 @@
+ 
+ 
+ if(BUILD_SERVER)
++
+ 	add_executable(${PROJECT_NAME}server ${server_SRCS} ${extra_windows_SRCS})
+ 	add_dependencies(${PROJECT_NAME}server GenerateVersion)
+ 
+@@ -757,7 +760,7 @@
+ 		endif()
+ 	endif()
+ 
+-	set(CMAKE_CXX_FLAGS_RELEASE "-DNDEBUG ${RELEASE_WARNING_FLAGS} ${OTHER_FLAGS} -pipe -funroll-loops")
++	set(CMAKE_CXX_FLAGS_RELEASE "-DNDEBUG ${RELEASE_WARNING_FLAGS} ${OTHER_FLAGS} -pipe -funroll-loops $ENV{CPPFLAGS}")
+ 	if(CMAKE_SYSTEM_NAME MATCHES "(Darwin|BSD|DragonFly)")
+ 		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Os")
+ 	else()
+--- a/irrlicht/source/Irrlicht/CMakeLists.txt
++++ b/irrlicht/source/Irrlicht/CMakeLists.txt
+@@ -14,8 +14,9 @@
+ set(CMAKE_CXX_STANDARD_REQUIRED ON)
+ 
+ if(CMAKE_CXX_COMPILER_ID MATCHES "^(GNU|Clang|AppleClang)$")
+-	set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+-	set(CMAKE_CXX_FLAGS_DEBUG "-g")
++	set(CMAKE_CXX_FLAGS_RELEASE "-O3 $ENV{CPPFLAGS}")
++	set(CMAKE_CXX_FLAGS_DEBUG "-g $ENV{CPPFLAGS}")
++	set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELEASE} -g")
+ 
+ 	add_compile_options(-Wall -pipe -fno-exceptions -fno-rtti)
+ 

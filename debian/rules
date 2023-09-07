@@ -1,4 +1,45 @@
 #!/usr/bin/make -f
 
+# build-hardening flags
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+override_dh_auto_configure:
+	cp -r irrlicht/ lib/irrlichtmt/
+	cp -r mtg/ games/minetest_game/
+	dh_auto_configure -- \
+		-DRUN_IN_PLACE=0 \
+		-DCMAKE_VERBOSE_MAKEFILE=ON \
+		-DENABLE_SYSTEM_JSONCPP=1 \
+		-DENABLE_SYSTEM_GMP=1 \
+		-DENABLE_SPATIAL=ON \
+		-DJSON_INCLUDE_DIR=/usr/include/jsoncpp \
+		-DENABLE_GETTEXT=1 \
+		-DENABLE_FREETYPE=1 \
+		-DFREETYPE_INCLUDE_DIR_freetype2=/usr/include/freetype2 \
+		-DFREETYPE_INCLUDE_DIR_ft2build=/usr/include \
+		-DENABLE_LEVELDB=1 \
+		-DENABLE_POSTGRESQL=1 \
+		-DLEVELDB_INCLUDE_DIR=/usr/include/leveldb \
+		-DCUSTOM_LOCALEDIR=/usr/share/locale \
+		-DCUSTOM_SHAREDIR=/usr/share/games/minetest \
+		-DCMAKE_INSTALL_PREFIX=/usr \
+		-DBUILD_SERVER=1 \
+		-DCMAKE_BUILD_TYPE=RelWithDebInfo
+
+override_dh_installchangelogs:
+	dh_installchangelogs debian/changelog.upstream
+
+override_dh_install:
+	find . -iname "license.txt" -delete
+	find debian/ -name "optimize_textures.sh" -delete
+	dh_install
+
+override_dh_missing:
+	dh_missing --list-missing
+
+override_dh_auto_test:
+	HOME=$$(mktemp -d) bin/minetest --run-unittests
+	dh_auto_test
+
 %:
-	dh $@
+	dh ${@}

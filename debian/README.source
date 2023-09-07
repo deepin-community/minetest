@@ -1,0 +1,4 @@
+d/watch and d/gbp.conf have been configured such that merging in new upstream
+releases should be as easy as:
+
+gbp import-orig --uscan
